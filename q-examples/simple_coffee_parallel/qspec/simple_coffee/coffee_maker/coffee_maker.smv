@@ -1,0 +1,114 @@
+MODULE main
+
+VAR
+
+brew : 0..20;
+
+coin : boolean;
+
+confirmed : boolean;
+
+st : {System_Brewer_Brewing_Payment_Idle,System_Brewer_Brewing_Payment_Paid,System_Brewer_Confirm_Payment_Idle,System_Brewer_Confirm_Payment_Paid,System_Brewer_Ready_Payment_Idle,System_Brewer_Ready_Payment_Paid};
+
+INIT
+
+st = System_Brewer_Ready_Payment_Idle & (brew = 0);
+
+DEFINE
+
+System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Brewing_Payment_Idle_1 := st = System_Brewer_Brewing_Payment_Idle & next(st) = System_Brewer_Brewing_Payment_Idle & ((!((brew = 2) & (!((!confirmed) & (brew < 2))))) & ((!((!confirmed) & (brew < 2))) & ((!((brew < 2) & ((!((!confirmed) & (brew < 2))) & (!(brew = 2))))) & ((!coin) & (next(brew) = brew)))));
+
+System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Brewing_Payment_Paid_2 := st = System_Brewer_Brewing_Payment_Paid & next(st) = System_Brewer_Brewing_Payment_Paid & ((!((brew = 2) & (!((!confirmed) & (brew < 2))))) & ((!((!confirmed) & (brew < 2))) & ((!((brew < 2) & ((!((!confirmed) & (brew < 2))) & (!(brew = 2))))) & ((!confirmed) & (next(brew) = brew)))));
+
+System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Brewing_Payment_Idle_3 := st = System_Brewer_Brewing_Payment_Paid & next(st) = System_Brewer_Brewing_Payment_Idle & ((!((brew = 2) & (!((!confirmed) & (brew < 2))))) & ((!((!confirmed) & (brew < 2))) & ((!((brew < 2) & ((!((!confirmed) & (brew < 2))) & (!(brew = 2))))) & (confirmed & (next(brew) = brew)))));
+
+System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Brewing_Payment_Paid_4 := st = System_Brewer_Brewing_Payment_Idle & next(st) = System_Brewer_Brewing_Payment_Paid & ((!((brew = 2) & (!((!confirmed) & (brew < 2))))) & ((!((!confirmed) & (brew < 2))) & ((!((brew < 2) & ((!((!confirmed) & (brew < 2))) & (!(brew = 2))))) & (coin & (next(brew) = brew)))));
+
+System_Brewer_Ready_Payment_Idle_to_System_Brewer_Ready_Payment_Idle_5 := st = System_Brewer_Ready_Payment_Idle & next(st) = System_Brewer_Ready_Payment_Idle & ((!coin) & (next(brew) = brew));
+
+System_Brewer_Ready_Payment_Paid_to_System_Brewer_Ready_Payment_Paid_6 := st = System_Brewer_Ready_Payment_Paid & next(st) = System_Brewer_Ready_Payment_Paid & ((!coin) & ((!confirmed) & (next(brew) = brew)));
+
+System_Brewer_Ready_Payment_Paid_to_System_Brewer_Ready_Payment_Idle_7 := st = System_Brewer_Ready_Payment_Paid & next(st) = System_Brewer_Ready_Payment_Idle & ((!coin) & (confirmed & (next(brew) = brew)));
+
+System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Ready_Payment_Idle_8 := st = System_Brewer_Brewing_Payment_Idle & next(st) = System_Brewer_Ready_Payment_Idle & ((brew = 2) & ((!((!confirmed) & (brew < 2))) & ((next(brew) = 0) & (!coin))));
+
+System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Ready_Payment_Paid_9 := st = System_Brewer_Brewing_Payment_Paid & next(st) = System_Brewer_Ready_Payment_Paid & ((brew = 2) & ((!((!confirmed) & (brew < 2))) & ((next(brew) = 0) & (!confirmed))));
+
+System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Ready_Payment_Idle_10 := st = System_Brewer_Brewing_Payment_Paid & next(st) = System_Brewer_Ready_Payment_Idle & ((brew = 2) & ((!((!confirmed) & (brew < 2))) & ((next(brew) = 0) & confirmed)));
+
+System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Ready_Payment_Paid_11 := st = System_Brewer_Brewing_Payment_Idle & next(st) = System_Brewer_Ready_Payment_Paid & ((brew = 2) & ((!((!confirmed) & (brew < 2))) & ((next(brew) = 0) & coin)));
+
+System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Confirm_Payment_Idle_12 := st = System_Brewer_Brewing_Payment_Idle & next(st) = System_Brewer_Confirm_Payment_Idle & ((!confirmed) & ((brew < 2) & ((!coin) & (next(brew) = brew))));
+
+System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Confirm_Payment_Paid_13 := st = System_Brewer_Brewing_Payment_Paid & next(st) = System_Brewer_Confirm_Payment_Paid & ((!confirmed) & ((brew < 2) & (next(brew) = brew)));
+
+System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Confirm_Payment_Paid_14 := st = System_Brewer_Brewing_Payment_Idle & next(st) = System_Brewer_Confirm_Payment_Paid & ((!confirmed) & ((brew < 2) & (coin & (next(brew) = brew))));
+
+System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Brewing_Payment_Idle_15 := st = System_Brewer_Brewing_Payment_Idle & next(st) = System_Brewer_Brewing_Payment_Idle & ((brew < 2) & ((!((!confirmed) & (brew < 2))) & ((!(brew = 2)) & ((next(brew) = (brew + 1)) & (!coin)))));
+
+System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Brewing_Payment_Idle_16 := st = System_Brewer_Brewing_Payment_Paid & next(st) = System_Brewer_Brewing_Payment_Idle & ((brew < 2) & ((!((!confirmed) & (brew < 2))) & ((!(brew = 2)) & ((next(brew) = (brew + 1)) & confirmed))));
+
+System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Brewing_Payment_Paid_17 := st = System_Brewer_Brewing_Payment_Idle & next(st) = System_Brewer_Brewing_Payment_Paid & ((brew < 2) & ((!((!confirmed) & (brew < 2))) & ((!(brew = 2)) & ((next(brew) = (brew + 1)) & coin))));
+
+System_Brewer_Confirm_Payment_Idle_to_System_Brewer_Ready_Payment_Idle_18 := st = System_Brewer_Confirm_Payment_Idle & next(st) = System_Brewer_Ready_Payment_Idle & ((!confirmed) & ((!coin) & (next(brew) = brew)));
+
+System_Brewer_Confirm_Payment_Paid_to_System_Brewer_Ready_Payment_Paid_19 := st = System_Brewer_Confirm_Payment_Paid & next(st) = System_Brewer_Ready_Payment_Paid & ((!confirmed) & (next(brew) = brew));
+
+System_Brewer_Confirm_Payment_Idle_to_System_Brewer_Ready_Payment_Paid_20 := st = System_Brewer_Confirm_Payment_Idle & next(st) = System_Brewer_Ready_Payment_Paid & ((!confirmed) & (coin & (next(brew) = brew)));
+
+System_Brewer_Confirm_Payment_Idle_to_System_Brewer_Brewing_Payment_Idle_21 := st = System_Brewer_Confirm_Payment_Idle & next(st) = System_Brewer_Brewing_Payment_Idle & (confirmed & ((next(brew) = 0) & (!coin)));
+
+System_Brewer_Confirm_Payment_Paid_to_System_Brewer_Brewing_Payment_Idle_22 := st = System_Brewer_Confirm_Payment_Paid & next(st) = System_Brewer_Brewing_Payment_Idle & (confirmed & (next(brew) = 0));
+
+System_Brewer_Confirm_Payment_Idle_to_System_Brewer_Brewing_Payment_Paid_23 := st = System_Brewer_Confirm_Payment_Idle & next(st) = System_Brewer_Brewing_Payment_Paid & (confirmed & ((next(brew) = 0) & coin));
+
+System_Brewer_Ready_Payment_Paid_to_System_Brewer_Confirm_Payment_Paid_24 := st = System_Brewer_Ready_Payment_Paid & next(st) = System_Brewer_Confirm_Payment_Paid & (coin & ((!confirmed) & (next(brew) = brew)));
+
+System_Brewer_Ready_Payment_Paid_to_System_Brewer_Confirm_Payment_Idle_25 := st = System_Brewer_Ready_Payment_Paid & next(st) = System_Brewer_Confirm_Payment_Idle & (coin & (confirmed & (next(brew) = brew)));
+
+System_Brewer_Ready_Payment_Idle_to_System_Brewer_Confirm_Payment_Paid_26 := st = System_Brewer_Ready_Payment_Idle & next(st) = System_Brewer_Confirm_Payment_Paid & (coin & (next(brew) = brew));
+
+-- InState defines
+
+InState_System := st = System_Brewer_Brewing_Payment_Idle | st = System_Brewer_Brewing_Payment_Paid | st = System_Brewer_Confirm_Payment_Idle | st = System_Brewer_Confirm_Payment_Paid | st = System_Brewer_Ready_Payment_Idle | st = System_Brewer_Ready_Payment_Paid;
+
+InState_Brewer := st = System_Brewer_Brewing_Payment_Idle | st = System_Brewer_Brewing_Payment_Paid | st = System_Brewer_Confirm_Payment_Idle | st = System_Brewer_Confirm_Payment_Paid | st = System_Brewer_Ready_Payment_Idle | st = System_Brewer_Ready_Payment_Paid;
+
+InState_Brewing := st = System_Brewer_Brewing_Payment_Idle | st = System_Brewer_Brewing_Payment_Paid;
+
+InState_Payment := st = System_Brewer_Brewing_Payment_Idle | st = System_Brewer_Brewing_Payment_Paid | st = System_Brewer_Confirm_Payment_Idle | st = System_Brewer_Confirm_Payment_Paid | st = System_Brewer_Ready_Payment_Idle | st = System_Brewer_Ready_Payment_Paid;
+
+InState_Idle := st = System_Brewer_Brewing_Payment_Idle | st = System_Brewer_Confirm_Payment_Idle | st = System_Brewer_Ready_Payment_Idle;
+
+InState_Paid := st = System_Brewer_Brewing_Payment_Paid | st = System_Brewer_Confirm_Payment_Paid | st = System_Brewer_Ready_Payment_Paid;
+
+InState_Confirm := st = System_Brewer_Confirm_Payment_Idle | st = System_Brewer_Confirm_Payment_Paid;
+
+InState_Ready := st = System_Brewer_Ready_Payment_Idle | st = System_Brewer_Ready_Payment_Paid;
+
+VAR QQ_SKIP : boolean;
+
+TRANS QQ_SKIP -> (next(st) = st & ((next(brew) = brew) & ((next(coin) = coin) & (next(confirmed) = confirmed))));
+
+
+TRANS
+
+System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Brewing_Payment_Idle_1 | System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Brewing_Payment_Paid_2 | System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Brewing_Payment_Idle_3 | System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Brewing_Payment_Paid_4 | System_Brewer_Ready_Payment_Idle_to_System_Brewer_Ready_Payment_Idle_5 | System_Brewer_Ready_Payment_Paid_to_System_Brewer_Ready_Payment_Paid_6 | System_Brewer_Ready_Payment_Paid_to_System_Brewer_Ready_Payment_Idle_7 | System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Ready_Payment_Idle_8 | System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Ready_Payment_Paid_9 | System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Ready_Payment_Idle_10 | System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Ready_Payment_Paid_11 | System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Confirm_Payment_Idle_12 | System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Confirm_Payment_Paid_13 | System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Confirm_Payment_Paid_14 | System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Brewing_Payment_Idle_15 | System_Brewer_Brewing_Payment_Paid_to_System_Brewer_Brewing_Payment_Idle_16 | System_Brewer_Brewing_Payment_Idle_to_System_Brewer_Brewing_Payment_Paid_17 | System_Brewer_Confirm_Payment_Idle_to_System_Brewer_Ready_Payment_Idle_18 | System_Brewer_Confirm_Payment_Paid_to_System_Brewer_Ready_Payment_Paid_19 | System_Brewer_Confirm_Payment_Idle_to_System_Brewer_Ready_Payment_Paid_20 | System_Brewer_Confirm_Payment_Idle_to_System_Brewer_Brewing_Payment_Idle_21 | System_Brewer_Confirm_Payment_Paid_to_System_Brewer_Brewing_Payment_Idle_22 | System_Brewer_Confirm_Payment_Idle_to_System_Brewer_Brewing_Payment_Paid_23 | System_Brewer_Ready_Payment_Paid_to_System_Brewer_Confirm_Payment_Paid_24 | System_Brewer_Ready_Payment_Paid_to_System_Brewer_Confirm_Payment_Idle_25 | System_Brewer_Ready_Payment_Idle_to_System_Brewer_Confirm_Payment_Paid_26 | QQ_SKIP;
+
+-- No INVAR for this model
+
+-- Temporal logic assertions.
+
+
+-- pragma spec section
+
+CTLSPEC NAME
+Req2a := coin -> EF (InState_Ready);
+
+CTLSPEC NAME
+Req2 := AG (coin -> EF (InState_Ready));
+
+CTLSPEC NAME
+Req1 := AG !(InState_Confirm & brew = 2);
+
+

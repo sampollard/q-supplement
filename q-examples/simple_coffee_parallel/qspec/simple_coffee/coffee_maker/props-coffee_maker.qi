@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assertions>
+    <pragma
+    key="SMV_CTLN"
+    value="Req1 := AG !(InState_Confirm &amp; brew = 2)"
+    />
+    <pragma
+    key="SMV_CTLN"
+    value="Req2 := AG (coin -> EF (InState_Ready))"
+    />
+    <pragma
+    key="SMV_CTLN"
+    value="Req2a := coin -> EF (InState_Ready)"
+    />
+</assertions>

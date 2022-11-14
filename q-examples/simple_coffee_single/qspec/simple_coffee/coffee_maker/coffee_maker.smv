@@ -1,0 +1,65 @@
+MODULE main
+
+VAR
+
+brew : 0..20;
+
+coin : boolean;
+
+confirmed : boolean;
+
+st : {Brewing,Confirm,Ready};
+
+INIT
+
+st = Ready & (brew = 0);
+
+DEFINE
+
+Brewing_to_Brewing_1 := st = Brewing & next(st) = Brewing & ((!((brew = 2) & (!((!confirmed) & (brew < 2))))) & ((!((!confirmed) & (brew < 2))) & ((!((brew < 2) & ((!((!confirmed) & (brew < 2))) & (!(brew = 2))))) & (next(brew) = brew))));
+
+Ready_to_Ready_2 := st = Ready & next(st) = Ready & ((!coin) & (next(brew) = brew));
+
+Brewing_to_Ready_3 := st = Brewing & next(st) = Ready & ((brew = 2) & ((!((!confirmed) & (brew < 2))) & (next(brew) = 0)));
+
+Brewing_to_Confirm_4 := st = Brewing & next(st) = Confirm & ((!confirmed) & ((brew < 2) & (next(brew) = brew)));
+
+Brewing_to_Brewing_5 := st = Brewing & next(st) = Brewing & ((brew < 2) & ((!((!confirmed) & (brew < 2))) & ((!(brew = 2)) & (next(brew) = (brew + 1)))));
+
+Confirm_to_Ready_6 := st = Confirm & next(st) = Ready & ((!confirmed) & (next(brew) = brew));
+
+Confirm_to_Brewing_7 := st = Confirm & next(st) = Brewing & (confirmed & (next(brew) = 0));
+
+Ready_to_Confirm_8 := st = Ready & next(st) = Confirm & (coin & (next(brew) = brew));
+
+-- InState defines
+
+InState_Brewing := st = Brewing;
+
+InState_Confirm := st = Confirm;
+
+InState_Ready := st = Ready;
+
+VAR QQ_SKIP : boolean;
+
+TRANS QQ_SKIP -> (next(st) = st & ((next(brew) = brew) & ((next(coin) = coin) & (next(confirmed) = confirmed))));
+
+
+TRANS
+
+Brewing_to_Brewing_1 | Ready_to_Ready_2 | Brewing_to_Ready_3 | Brewing_to_Confirm_4 | Brewing_to_Brewing_5 | Confirm_to_Ready_6 | Confirm_to_Brewing_7 | Ready_to_Confirm_8 | QQ_SKIP;
+
+-- No INVAR for this model
+
+-- Temporal logic assertions.
+
+
+-- pragma spec section
+
+CTLSPEC NAME
+Req2 := EF (st = Confirm);
+
+CTLSPEC NAME
+Req1 := AG !(st = Confirm & brew = 2);
+
+

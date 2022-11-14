@@ -1,0 +1,11 @@
+-R src/ Chart
+src/Util.v
+src/Process.v
+src/Semantics/Config.v
+src/Semantics/ConfigEnv.v
+src/Semantics/ConfigAction.v
+src/Semantics/Equiv.v
+src/TLA.v
+src/Turnstile.v
+src/Decompose.v
+

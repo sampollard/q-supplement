@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assertions>
+    <pragma
+    key="SMV_CTLN"
+    value="Req1 := AG !(st = Confirm &amp; brew = 2)"
+    />
+    <pragma
+    key="SMV_CTLN"
+    value="Req2 := EF (st = Confirm)"
+    />
+</assertions>

@@ -1,0 +1,103 @@
+# This RELAX NG schema defines the QSpec syntax.
+# 
+# The schema is written in RELAX NG's "compact syntax".  The tool that
+# does the actual schema validation (`xmllint`) only supports RELAX
+# NG's regular XML-based syntax, so the compact syntax needs to be
+# converted to the regular syntax after any changes are made to the
+# schema.  The conversion tool `trang` (available in various package
+# repositories, including Debian, Ubuntu, etc.) does that job (the
+# .rnc file is the compact syntax, and the .rng is the regular
+# syntax):
+# 
+#   trang qspec.rnc qspec.rng
+# 
+# N.B.: `trang` is not needed to build or run `qlang` itself
+start =
+  element qspec {
+    attribute version { "1.0" }?
+    & DataModel?
+    & Assert*
+    & Assertions*
+    & Constraint*
+    & Pragma*
+    & (Sequential | Parallel)
+  }
+Parallel = element parallel { (Sequential | Parallel)+ }
+Sequential =
+  element sequential { XmlBase? & Constraint* & Initial & State+ }
+Initial = element initial { XmlBase? & Transition+ }
+State =
+  element state {
+    XmlBase?
+    & Id
+    & OnEntry?
+    & OnExit?
+    & Transition*
+    & (Sequential | Parallel)?
+  }
+Transition =
+  element transition {
+    attribute target { text }?
+    & attribute type { "abort" | "final" | "inner" }?
+    & attribute label { text }?
+    & attribute priority { text }?
+    & (Guard | Assign | Relate)*
+  }
+OnEntry = element onentry { (Assign | Relate)+ }
+OnExit = element onexit { (Assign | Relate)+ }
+Guard =
+  element guard {
+    Name?,
+    attribute predicate { text }
+  }
+Assign =
+  element assign {
+    attribute location { text }
+    & (Expr | Value+)
+  }
+Value = element value { Expr }
+Relate = element relate { Expr }
+DataModel = element datamodel { XmlBase? & Data+ }
+Data =
+  element data {
+    Id,
+    attribute type { text }?,
+    attribute range { text }?,
+    attribute intent { "register" | "input" }?
+  }
+Assert =
+  element assert {
+    attribute prop { text },
+    Name?,
+    attribute kind {
+      # [TODO: case insensitive]
+      "invariant"
+      | "ltl"
+      | "ctl"
+      | "INVARIANT"
+      | "LTL"
+      | "CTL"
+    }?
+  }
+Assertions =
+  element assertions { XmlBase? & (Assert | Assertions | Pragma)* }
+Constraint =
+  element constraint {
+    Name?,
+    attribute kind { "static" | "dynamic" }?,
+    Expr
+  }
+Pragma =
+  element pragma {
+    attribute key { text },
+    attribute value { text }
+  }
+Id = attribute id { text }
+Name = attribute name { text }
+Expr = attribute expr { text }
+XmlBase =
+  attribute xml:base {
+    # added by `XInclude`
+    text
+  }
+

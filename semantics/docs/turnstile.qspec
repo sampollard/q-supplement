@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qspec version="1.0">
+
+  <datamodel>
+    <data id="pwr" type="bool" intent="register"/>
+    <data id="push" type="bool" intent="input"/>
+    <data id="reset" type="bool" intent="input"/>
+    <data id="coins" type="int" range="(range 0 99)" intent="register"/>
+    <data id="collect" type="bool" intent="input"/>
+    <data id="keypad" type="(enum a b c)" intent="input"/>
+  </datamodel>
+
+  <parallel>
+    <sequential>
+
+      <initial>
+        <transition target="Off">
+          <relate expr="(= coins' 0)" />
+        </transition>
+      </initial>
+
+      <state id="Off">
+        <transition target="On">
+          <guard predicate="pwr" />
+        </transition>
+        <transition target="Off">
+          <guard predicate="(/\ (~ pwr) collect)" />
+          <assign location="coins" expr="0"/>
+        </transition>
+      </state>
+
+      <state id="On">
+        <transition target="Off">
+          <guard predicate="(~ pwr)" />
+        </transition>
+
+        <parallel>
+          <sequential>
+            <initial>
+              <transition target="Locked"/>
+            </initial>
+
+            <state id="Locked">
+              <transition target="Unlocked" />
+            </state>
+
+            <state id="Unlocked">
+              <transition target="Locked" />
+            </state>
+          </sequential>
+
+          <sequential>
+
+            <initial>
+              <transition target="Ready"/>
+            </initial>
+
+            <state id="Ready">
+              <transition target="Reading"/>
+            </state>
+
+            <state id="Reading">
+              <transition target="Accept">
+                <assign location="coins" expr="(+ coins 1)"/>
+              </transition>
+              <transition target="Ready" />
+            </state>
+
+            <state id="Accept">
+              <transition target="Ready"/>
+            </state>
+
+          </sequential>
+
+        </parallel>
+      </state>
+    </sequential>
+    <sequential>
+      <initial>
+        <transition target="ready">
+          <assign location="pwr" expr="FALSE"/>
+        </transition>
+      </initial>
+
+      <state id="ready">
+        <transition target="seq1">
+          <guard predicate="(= keypad a)" />
+        </transition>
+        <transition target="ready">
+          <guard predicate="(~ (= keypad a))" />
+        </transition>
+      </state>
+      <state id="seq1">
+        <transition target="seq2">
+          <guard predicate="(= keypad b)" />
+        </transition>
+        <transition target="ready">
+          <guard predicate="(~ (= keypad b))" />
+        </transition>
+      </state>
+      <state id="seq2">
+        <transition target="ready">
+          <assign location="pwr" expr="(~ pwr)" />
+        </transition>
+      </state>
+    </sequential>
+  </parallel>
+
+</qspec>

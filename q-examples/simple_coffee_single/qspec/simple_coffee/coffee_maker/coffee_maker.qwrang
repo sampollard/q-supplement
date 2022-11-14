@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<qspec xmlns:xi="http://www.w3.org/2001/XInclude">
+   <datamodel>
+      <data id="confirmed" intent="input" type="bool"/>
+      <data id="coin" intent="input" type="bool"/>
+      <data id="brew" intent="register" range="(range 0 20)" type="int"/>
+   </datamodel>
+   <sequential>
+   <initial>
+      <transition priority="1" target="Ready">
+         <assign expr="0" location="brew"/>
+      </transition>
+   </initial>
+   <state id="Ready">
+      <transition priority="1" target="Confirm">
+         <guard predicate="coin"/>
+      </transition>
+   </state>
+   <state id="Confirm">
+      <transition priority="1" target="Brewing">
+         <guard predicate="confirmed"/>
+         <assign expr="0" location="brew"/>
+      </transition>
+      <transition priority="2" target="Ready">
+         <guard predicate="(~ confirmed)"/>
+      </transition>
+   </state>
+   <state id="Brewing">
+      <transition priority="3" target="Brewing">
+         <guard predicate="(&lt; brew 2)"/>
+         <assign expr="(+ brew 1)" location="brew"/>
+      </transition>
+      <transition priority="1" target="Confirm">
+         <guard predicate="(/\ (~ confirmed) (&lt; brew 2))"/>
+      </transition>
+      <transition priority="2" target="Ready">
+         <guard predicate="(= brew 2)"/>
+         <assign expr="0" location="brew"/>
+      </transition>
+   </state>
+</sequential>
+   <assertions>
+    <pragma key="SMV_CTLN" value="Req1 := AG !(st = Confirm &amp; brew = 2)"/>
+    <pragma key="SMV_CTLN" value="Req2 := EF (st = Confirm)"/>
+</assertions>
+</qspec>

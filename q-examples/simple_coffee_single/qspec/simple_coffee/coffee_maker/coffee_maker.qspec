@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<qspec xmlns:xi="http://www.w3.org/2001/XInclude">
+   <datamodel>
+      <data id="confirmed" intent="input" type="bool"/>
+      <data id="coin" intent="input" type="bool"/>
+      <data id="brew" intent="register" range="(range 0 20)" type="int"/>
+   </datamodel>
+   <xi:include href="state-coffee_maker.qi"/>
+   <xi:include href="props-coffee_maker.qi"/>
+</qspec>

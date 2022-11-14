@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sequential>
+   <initial>
+      <transition priority="1" target="System">
+         <assign expr="$matlab{#0#}" location="brew"/>
+      </transition>
+   </initial>
+   <state id="System">
+      <parallel>
+         <sequential>
+            <initial>
+               <transition priority="1" target="Brewer"/>
+            </initial>
+            <state id="Brewer">
+               <sequential>
+                  <initial>
+                     <transition priority="1" target="Ready"/>
+                  </initial>
+                  <state id="Ready">
+                     <transition priority="1" target="Confirm">
+                        <guard predicate="$matlab{#coin#}"/>
+                     </transition>
+                  </state>
+                  <state id="Confirm">
+                     <transition priority="1" target="Brewing">
+                        <guard predicate="$matlab{#confirmed#}"/>
+                        <assign expr="$matlab{#0#}" location="brew"/>
+                     </transition>
+                     <transition priority="2" target="Ready">
+                        <guard predicate="$matlab{#~confirmed#}"/>
+                     </transition>
+                  </state>
+                  <state id="Brewing">
+                     <transition priority="3" target="Brewing">
+                        <guard predicate="$matlab{#brew &lt; 2#}"/>
+                        <assign expr="$matlab{#brew +1#}" location="brew"/>
+                     </transition>
+                     <transition priority="1" target="Confirm">
+                        <guard predicate="$matlab{#~confirmed&amp;&amp; brew &lt; 2#}"/>
+                     </transition>
+                     <transition priority="2" target="Ready">
+                        <guard predicate="$matlab{#brew == 2#}"/>
+                        <assign expr="$matlab{#0#}" location="brew"/>
+                     </transition>
+                  </state>
+               </sequential>
+            </state>
+         </sequential>
+         <sequential>
+            <initial>
+               <transition priority="1" target="Payment"/>
+            </initial>
+            <state id="Payment">
+               <sequential>
+                  <initial>
+                     <transition priority="1" target="Idle"/>
+                  </initial>
+                  <state id="Idle">
+                     <transition priority="1" target="Paid">
+                        <guard predicate="$matlab{#coin#}"/>
+                     </transition>
+                  </state>
+                  <state id="Paid">
+                     <transition priority="1" target="Idle">
+                        <guard predicate="$matlab{#confirmed#}"/>
+                     </transition>
+                  </state>
+               </sequential>
+            </state>
+         </sequential>
+      </parallel>
+   </state>
+</sequential>
